@@ -1,4 +1,4 @@
-# boHol(薄荷)
+# boHol
 
 (@.@)
 Maybe a game server...
