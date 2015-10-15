@@ -19,19 +19,35 @@
 #ifndef __SHARED_BYTEBUFFER_H__
 #define __SHARED_BYTEBUFFER_H__
 
-#include "common.h"
+// namespace boHol {
 
+#include <global.h>
+#include <platform/type_defines.h>
+
+template <typename Head>
 class ByteBuffer {
 public:
     const static size_t DEFAULT_SIZE = 0x1000;
 
-    ByteBuffer(): _rpos(0), _wpos(0) { _storage.reserve(DEFAULT_SIZE); }
-    explicit ByteBuffer(size_t res): _rpos(0), _wpos(0) { _storage.reserve(res); }
+    ByteBuffer(){
+        _rpos = _wpos = sizeof(Head);
+        _storage.reserve(DEFAULT_SIZE); 
+        _storage.resize(sizeof(Head));
+    }
+
+    explicit ByteBuffer(size_t res) {
+        _rpos = _wpos = sizeof(Head);
+        _storage.reserve(res + sizeof(Head)); 
+        _storage.resize(sizeof(Head));
+    }
+
     ByteBuffer(const ByteBuffer &buf): _rpos(buf._rpos), _wpos(buf._wpos), _storage(buf._storage) { }
 
     void clear() {
         _storage.clear();
-        _rpos = _wpos = 0;
+        // _rpos = _wpos = 0;
+        _rpos = _wpos = sizeof(Head);
+        _storage.resize(sizeof(Head));
     }
 
     uint8 operator[](size_t pos) { return read<uint8>(pos); }
@@ -53,8 +69,9 @@ public:
     bool empty() const { return _storage.empty(); }
 
     void resize(size_t newsize) {
-        _storage.resize(newsize);
-        _rpos = 0;
+        _storage.resize(newsize + sizeof(Head));
+        // _rpos = 0;
+        _rpos = sizeof(Head);
         _wpos = size();
     }
 
@@ -265,7 +282,8 @@ protected:
     std::vector<uint8> _storage;
 };
 
-template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::vector<T> v) {
+template <typename Head, typename T> 
+ByteBuffer<Head>  &operator<<(ByteBuffer<Head> &b, std::vector<T> v) {
     b << (uint32)v.size();
     for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++) {
         b << *i;
@@ -273,7 +291,8 @@ template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::vector<T> v) {
     return b;
 }
 
-template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::vector<T> &v) {
+template <typename Head, typename T> 
+ByteBuffer<Head> &operator>>(ByteBuffer<Head> &b, std::vector<T> &v) {
     uint32 vsize;
     b >> vsize;
     v.clear();
@@ -285,7 +304,8 @@ template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::vector<T> &v) {
     return b;
 }
 
-template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::list<T> v) {
+template <typename Head, typename T> 
+ByteBuffer<Head> &operator<<(ByteBuffer<Head> &b, std::list<T> v) {
     b << (uint32)v.size();
     for (typename std::list<T>::iterator i = v.begin(); i != v.end(); i++) {
         b << *i;
@@ -293,7 +313,8 @@ template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::list<T> v) {
     return b;
 }
 
-template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::list<T> &v) {
+template <typename Head, typename T> 
+ByteBuffer<Head> &operator>>(ByteBuffer<Head> &b, std::list<T> &v) {
     uint32 vsize;
     b >> vsize;
     v.clear();
@@ -305,7 +326,8 @@ template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::list<T> &v) {
     return b;
 }
 
-template <typename K, typename V> ByteBuffer &operator<<(ByteBuffer &b, std::map<K, V> &m) {
+template <typename Head, typename K, typename V> 
+ByteBuffer<Head> &operator<<(ByteBuffer<Head> &b, std::map<K, V> &m) {
     b << (uint32)m.size();
     for (typename std::map<K, V>::iterator i = m.begin(); i != m.end(); i++) {
         b << i->first << i->second;
@@ -313,7 +335,8 @@ template <typename K, typename V> ByteBuffer &operator<<(ByteBuffer &b, std::map
     return b;
 }
 
-template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map<K, V> &m) {
+template <typename Head, typename K, typename V> 
+ByteBuffer<Head> &operator>>(ByteBuffer<Head> &b, std::map<K, V> &m) {
     uint32 msize;
     b >> msize;
     m.clear();
@@ -325,5 +348,7 @@ template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map
     }
     return b;
 }
+
+// } // namespace boHol
 
 #endif // __BYTEBUFFER_H__
