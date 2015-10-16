@@ -27,18 +27,18 @@ public:
     }
 
     // Initialize a specify-opcode packet
-    void Initialize(const Head& opcode) {
+    void initialize(const Head& opcode) {
         clear();
         setOpcode(opcode);
     }
 
-    void Initialize(const void *packet, const size_t packet_size) {
+    void initialize(const void *packet, const size_t packet_size) {
         _rpos = _wpos = sizeof(Head);
         _storage.resize(packet_size);
         memcpy(&_storage[0], packet, packet_size);
     }
 
-    void Initialize(const Head opcode, const void *data, const size_t data_size) {
+    void initialize(const Head opcode, const void *data, const size_t data_size) {
         _rpos = _wpos = sizeof(Head);
         _storage.resize(data_size);
         setOpcode(opcode);
