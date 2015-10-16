@@ -21,8 +21,7 @@
 
 // namespace boHol {
 
-#include <global.h>
-#include <platform/type_defines.h>
+#include <platform/global_defines.h>
 
 template <typename Head>
 class ByteBuffer {

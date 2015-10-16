@@ -5,8 +5,7 @@
 #ifndef __NETWORK_SOCKET_HANDLER_H__
 #define __NETWORK_SOCKET_HANDLER_H__
 
-#include "network/socket_defines.h"
-
+#include <global.h>
 class EpollHandler {
 };
 
