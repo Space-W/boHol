@@ -6,6 +6,7 @@
 #define __FRAMEWORK_GLOBAL_H__
 
 #include <platform/compiler_defines.h>
+#include <platform/type_defines.h>
 
 #include <stdio.h>
 #include <stdlib.h>
